@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="${book.name}"></title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body class="d-flex flex-column min-vh-100">
+<div th:insert="blocks/nav :: nav"></div>
+<main class="page product-page">
+    <section class="clean-block clean-product">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info" th:text="${book.name}"></h2>
+            </div>
+            <div class="block-content">
+                <div class="product-info">
+                    <div class="row">
+                        <div class="col-4">
+                            <div id="carouselExample" class="carousel slide">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <img th:src="'/img/' + ${book.photosFirst}" class="d-block w-100">
+                                    </div>
+                                    <div th:each="p : ${book.photosOther}" class="carousel-item">
+                                        <img th:src="'/img/' + ${p}" class="d-block w-100">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                                        data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                                        data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div th:if="${role == 'ADMIN'}" class="summary mb-3">
+                                <a th:href="'/books/edit/' + ${book.id}" class="btn btn-success" type="button"
+                                   style="margin-right: 15px;">
+                                    Редактировать
+                                </a>
+                                <a th:href="'/books/delete/' + ${book.id}" class="btn btn-danger"
+                                   type="button">Удалить</a>
+                            </div>
+                            <form th:if="${role == 'CLIENT' and book.status.name() == 'ACTIVE'}" method="post"
+                                  th:action="'/books/rent/' + ${book.id}">
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="m-0 fs-4">До какого числа хотите бронировать</p>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control" type="date" name="date" required
+                                               onfocus="this.min=new Date().toISOString().split('T')[0]">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary" type="submit">Бронировать</button>
+                                    </div>
+                                </div>
+                                <hr>
+                            </form>
+                            <p style="font-size: 20px;">Статус:&nbsp;<span th:text="${book.status.name}"></span></p>
+                            <p th:unless="${book.dateFree.isEmpty()}" class="fs-4 m-0"
+                               th:text="${'Забронирована до: ' + book.dateFree}"></p>
+                            <p class="fs-5 m-0" th:text="${'Дата: ' + book.date}"></p>
+                            <p class="fs-5 m-0" th:text="${'ISBN: ' + book.isbn}"></p>
+                            <p class="fs-5 m-0" th:text="${'Автор: ' + book.description.author}"></p>
+                            <p class="fs-5 m-0"
+                               th:text="${'Возрастная категория: ' + book.description.category.name}"></p>
+                            <p class="fs-5 m-0" th:text="${'Жанр: ' + book.description.genre.name}"></p>
+                            <p class="fs-5 m-0" th:text="${'Количество страниц: ' + book.description.quantity}"></p>
+                            <hr>
+                            <p class="fs-5 m-0" th:text="${'Краткая аннотация: ' + book.description.description}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:insert="blocks/footer :: footer" class="mt-auto"></div>
+
+<script src="/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
